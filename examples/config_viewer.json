@@ -1,0 +1,25 @@
+{
+  "solutions": [],
+  "dataset": "path/to/dataset.csv",
+  "solutions_results": "path/to/solutions.csv",
+  "plot": {
+    "crossplot": {
+      "variable_list": ["var1", "var2"],
+      "prob_rms": "path/to/rms_probabilities.csv",
+      "output_path": "outputs/cross_plot.html"
+    },
+    "risk_curve": {
+      "models_cumulative_prob": "path/to/cumulative_probability.csv",
+      "rms_cumulative_prob": "path/to/rms_cumulative_prob.csv",
+      "output_path": "outputs/risk_curve.html",
+      "variables": ["var1", "var2"]
+    },
+    "histogram": {
+      "results": "path/to/attribute_levels_objective_function.csv",
+      "output_path": "outputs/attribute_levels.html"
+    },
+    "convergence": {
+      "output_path": "outputs/convergence.png"
+    }
+  }
+}
