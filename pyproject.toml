@@ -1,0 +1,52 @@
+[project]
+name            = "rmviewer"
+description     = "Representative Model Viewer"
+authors         = [{name = "EpicUTS", email = "cepuni02@unicamp.br"}]
+dynamic         = ["version"]
+requires-python = ">=3.12, <3.13"
+
+dependencies = [ "pandas==2.3.1", "plotly==6.1.2"]
+
+[project.optional-dependencies]
+# Local development dependencies
+dev = ["ruff"]
+# Continuous integration dependencies
+ci = ["ty"]
+
+# Continuous delivery dependencies
+cd = [
+    "pyinstaller",
+]
+
+[tool.ruff]
+indent-width = 4
+line-length  = 100
+src          = ["rmviewer", "scripts"]
+
+[tool.ruff.lint]
+select = [
+    "A",   # Detect shadowed builtins
+    "B",   # flake8-bugbear
+    "C4",  # Catch incorrect use of comprehensions, dict, list, etc
+    "E",   # PyCodeStyle errors
+    "F",   # Pyflakes rules
+    "FA",  # Enforce from __future__ import annotations
+    "G",   # Better usage of built-in logging
+    "I",   # Sort imports properly
+    "ICN", # Use common import conventions
+    "ISC", # Good use of string concatenation
+    "LOG", # Checks for issues using the standard library logging module.
+    "N",   # Enforce naming conventions, e.g. ClassName vs function_name
+    "NPY", # Some numpy-specific things
+    "PL",  # PyLint
+    "PTH", # Use pathlib instead of os.path
+    "PYI", # Linting rules for type annotations.
+    "Q",   # Linting rules for quotes
+    "RET", # Good return practices
+    "RUF", # Ruff lint
+    "SIM", # Common simplification rules
+    "TC",  # Enforce importing certain types in a TYPE_CHECKING block
+    "TID", # Some good import practices
+    "UP",  # Warn if certain things can changed due to newer Python versions
+    "W",   # PyCodeStyle warnings
+]
