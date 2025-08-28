@@ -3,7 +3,7 @@ from pathlib import Path
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from rmviewer.logger.custom_logger import Logger
-from rmviewer.plots.utils import get_html_centered_content
+from rmviewer.utils.figures import get_html_centered_content
 
 
 def generate_histogram(df_rm, charts_path, path_solutions):

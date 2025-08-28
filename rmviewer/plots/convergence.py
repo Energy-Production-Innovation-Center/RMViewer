@@ -6,18 +6,18 @@ from plotly.subplots import make_subplots
 from rmviewer.logger.custom_logger import Logger
 
 
-def generate_fig(df, show_legend=False):
+def generate_fig(df, show_legend=False, of_name="of_value"):
     df = df.sort_values(by="solution_id").reset_index(drop=True)
 
     selected = [df.iloc[0]]
     for i in range(1, len(df)):
-        if df.iloc[i]["of_value"] < selected[-1]["of_value"]:
+        if df.iloc[i][of_name] < selected[-1][of_name]:
             selected.append(df.iloc[i])
 
     df_selected = pd.DataFrame(selected)
 
     iterations = df_selected["solution_id"]
-    of_value = df_selected["of_value"]
+    of_value = df_selected[of_name]
 
     fig = go.Figure()
 
@@ -36,10 +36,10 @@ def generate_fig(df, show_legend=False):
     return fig
 
 
-def add_figure(vars_, fig, df):
+def add_figure(vars_, fig, df, of_name):
     legend = True
     for _var in vars_:
-        mini_fig = generate_fig(df, show_legend=legend)
+        mini_fig = generate_fig(df, show_legend=legend, of_name=of_name)
 
         for trace in mini_fig.data:
             fig.add_trace(trace)
@@ -68,9 +68,9 @@ def update_figure(vars_, fig):
     return fig
 
 
-def show_figure(variables, df, charts_path):
+def show_figure(variables, df, charts_path, of_name):
     fig = make_subplots(rows=1, cols=1)
-    fig = add_figure(variables, fig, df)
+    fig = add_figure(variables, fig, df, of_name)
     fig = update_figure(variables, fig)
 
     path_html = charts_path / Path("solutions_convergence.html")
@@ -79,11 +79,11 @@ def show_figure(variables, df, charts_path):
     Logger().log_info(f"The convergence chart of the solutions was generated in: {path_html}")
 
 
-def convergence_chart(df, charts_path):
+def convergence_chart(df, charts_path, of_name):
     variables = [
         {
             "title": "Convergence of the Optimization Method",
         },
     ]
 
-    show_figure(variables, df, charts_path)
+    show_figure(variables, df, charts_path, of_name)

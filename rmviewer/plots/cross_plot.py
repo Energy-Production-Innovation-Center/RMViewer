@@ -3,7 +3,7 @@ import math
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from rmviewer.logger.custom_logger import Logger
-from rmviewer.plots.utils import get_colors, update_figure, update_html
+from rmviewer.utils.figures import get_colors, update_figure, update_html
 
 MAX_MARKER = 20
 MIN_MARKER = 10
@@ -136,9 +136,13 @@ def convert_list(variable_list):
     return vars_
 
 
-def generate_cross_plot_chart(
-    results, dataset, solutions_ids, variable_list, charts_path, probability_list
-):  # noqa: PLR0913
+def generate_cross_plot_chart(results, config):
+    dataset = config.get("dataset")
+    solutions_ids = config.get("solutions")
+    variable_list = config.get("variable_list")
+    charts_path = config.get("output_path")
+    probability_list = config.get("prob_rms")
+
     df_rm = results[results["solution_id"].isin(solutions_ids)]
 
     path_solutions = [f"best_sol_{i + 1}_id_{id_}" for i, id_ in enumerate(solutions_ids)]
