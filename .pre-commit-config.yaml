@@ -1,0 +1,49 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+
+repos:
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v5.0.0
+      hooks:
+          - id: check-ast
+          - id: check-case-conflict
+          - id: check-executables-have-shebangs
+          - id: check-illegal-windows-names
+          - id: check-json
+          - id: check-merge-conflict
+          - id: check-shebang-scripts-are-executable
+          - id: check-symlinks
+          - id: check-toml
+          - id: check-xml
+          - id: debug-statements
+          - id: destroyed-symlinks
+          - id: detect-private-key
+          - id: name-tests-test
+            exclude: ^tests/unit/test_utils.py
+          - id: no-commit-to-branch
+          - id: pretty-format-json
+            args: [--autofix, --no-sort-keys]
+
+    - repo: local
+      hooks:
+          - id: format
+            name: check code style
+            stages: [pre-commit]
+            language: system
+            entry: sh -c "task format:check || go-task format:check"
+
+    - repo: local
+      hooks:
+          - id: lint
+            name: check linting problems
+            stages: [pre-commit]
+            language: system
+            entry: sh -c "task lint:check || go-task lint:check"
+
+    - repo: local
+      hooks:
+          - id: type
+            name: check typing problems
+            stages: [pre-commit]
+            language: system
+            entry: sh -c "task type:check || go-task type:check"
