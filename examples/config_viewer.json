@@ -1,4 +1,5 @@
-{
+{ 
+  "project_path": "path/to/project",
   "solutions": [],
   "dataset": "path/to/dataset.csv",
   "solutions_results": "path/to/solutions.csv",
@@ -19,7 +20,7 @@
       "output_path": "outputs/attribute_levels.html"
     },
     "convergence": {
-      "output_path": "outputs/convergence.png"
+      "of_name": "of_value"
     }
   }
 }

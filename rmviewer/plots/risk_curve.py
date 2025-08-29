@@ -3,7 +3,7 @@ import math
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from rmviewer.logger.custom_logger import Logger
-from rmviewer.plots.utils import get_colors, update_figure, update_html
+from rmviewer.utils.figures import get_colors, update_figure, update_html
 
 SPACING_DEFAULT = 0.05
 MAX_ROW = 0.5
