@@ -5,7 +5,7 @@ from pathlib import Path
 import pandas as pd
 
 
-def validate_file(path: str, extensions: tuple[str] = (".csv", ".json")) -> Path:
+def validate_file(path: Path, extensions: str = ".csv") -> Path:
     """
     Validates if the file exists
 
@@ -23,25 +23,25 @@ def validate_file(path: str, extensions: tuple[str] = (".csv", ".json")) -> Path
     return file_path
 
 
-def load_dataframe(path: str) -> pd.DataFrame:
+def load_dataframe(path: Path) -> pd.DataFrame:
     """
     Load CSV into DataFrame with validation
 
     :param str path: CSV file path
     :return: Data loaded into DataFrame
     """
-    file_path = validate_file(path, extensions=(".csv",))
+    file_path = validate_file(path, extensions=".csv")
     return pd.read_csv(file_path)
 
 
-def load_json(path: str) -> dict:
+def load_json(path: Path) -> dict:
     """
     Load JSON with validation
 
     :param str path: JSON file path
     :return: Data loaded into dictionary
     """
-    file_path = validate_file(path, extensions=(".json",))
+    file_path = validate_file(path, extensions=".json")
     with file_path.open("r") as f:
         return json.load(f)
 
@@ -165,7 +165,7 @@ def validate_config(config: dict) -> None:
     required_keys = ["project_path", "solutions", "dataset", "solutions_results", "plot"]
     _validate_required_keys(config, required_keys)
 
-    project_path = config.get("project_path")
+    project_path = config.get("project_path", "")
     _validate_project_path(project_path)
 
     plot_cfg = config.get("plot", {})

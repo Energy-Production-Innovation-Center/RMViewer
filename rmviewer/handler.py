@@ -1,5 +1,6 @@
 from pathlib import Path
-from rmviewer.context.data_loader import load_df, load_data
+
+from rmviewer.context.data_loader import load_data, load_df
 from rmviewer.viewer import RMViewer
 
 
@@ -12,7 +13,11 @@ def call_viewer(config_path: Path) -> None:
 
     data = load_data(config_path)
     config = data.get("config")
-    project_path = data.get("project_path")
+
+    if config is None:
+        raise ValueError("'config' key is required in date.")
+
+    project_path = Path(data.get("project_path"))
     solutions = config.get("solutions")
     dataset = data.get("dataset")
     solutions_results = data.get("solutions_results")
