@@ -1,5 +1,7 @@
-import pandas as pd
 from pathlib import Path
+
+import pandas as pd
+
 from rmviewer.logger.custom_logger import Logger
 from rmviewer.plots.attribute_levels import generate_attribute_levels_chart
 from rmviewer.plots.convergence import convergence_chart
@@ -98,6 +100,6 @@ class RMViewer:
         :param path output_path: Path where files will be saved
         :param str of_value: OF name from results file
         """
-        Logger().log_info(f"Generating convergence chart")
+        Logger().log_info("Generating convergence chart")
 
         convergence_chart(self.solutions_results, output_path, of_name)

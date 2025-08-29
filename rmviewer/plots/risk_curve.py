@@ -10,7 +10,7 @@ MAX_ROW = 0.5
 MIN_ROW = 0.1
 
 
-def generate_risk_curve(var, rms=None, show_legend=False, rms_y=None, context=None):
+def generate_risk_curve(var, context, rms=None, show_legend=False, rms_y=None):
     df_models = context["dataset"]
     df_prob = context["models_cumulative_prob"]
 
@@ -128,11 +128,7 @@ def add_figure(variables, fig, rms, sol_id, context):
 
     for var in variables:
         mini_fig = generate_risk_curve(
-            var,
-            rms=rms,
-            show_legend=legend_shown,
-            rms_y=rms_y,
-            context=context,
+            var, rms=rms, context=context, show_legend=legend_shown, rms_y=rms_y
         )
 
         for trace in mini_fig.data:
