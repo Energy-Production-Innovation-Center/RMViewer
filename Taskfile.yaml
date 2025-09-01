@@ -11,6 +11,10 @@ vars:
   OUT_DIR: ./out
   # Report dir is where all reports goes (lint, test results).
   REPORT_DIR: "{{.OUT_DIR}}/report"
+  # Build dir is where binaries and configuration files are stored for a target.
+  BUILD_DIR: "{{.OUT_DIR}}/bin"
+  # Dist dir is where all distribution installers goes.
+  DIST_DIR: "{{.OUT_DIR}}/dist"
   # Application version.
   APP_VERSION:
     sh: |
@@ -54,6 +58,27 @@ tasks:
       - pyproject.toml
     cmds:
       - scripts\\conda.bat
+
+  run:
+    desc: Run CLI with provided arguments.
+    platforms: [linux, windows]
+    deps:
+      - task: run:linux
+      - task: run:windows
+
+  run:linux:
+    internal: true
+    platforms: [linux]
+    cmds:
+      - task: install
+      - scripts/conda.sh python -m src {{.CLI_ARGS}}
+
+  run:windows:
+    internal: true
+    platforms: [windows]
+    cmds:
+      - task: install:windows
+      - scripts\\conda.bat python -m src {{.CLI_ARGS}}
 
   format:check:
     desc: Check code style.
@@ -164,3 +189,51 @@ tasks:
       - task: install
       - task: format:fix
       - task: lint:fix
+
+  build:
+    desc: Generate all binaries (Windows and Linux).
+    cmds:
+      - task: build:linux
+      - task: build:windows
+
+  build:linux:
+    desc: Generate the CLI application binary for Linux.
+    cmds:
+      - >
+        docker build .
+        --target bin-linux-cli
+        --output {{.BUILD_DIR}}
+        --build-arg APP_VERSION={{.APP_VERSION}}
+
+  build:windows:
+    desc: Generate the CLI application binary for Windows.
+    cmds:
+      - >
+        docker build .
+        --target bin-windows-cli
+        --output {{.BUILD_DIR}}
+        --build-arg APP_VERSION={{.APP_VERSION}}
+
+  dist:
+    desc: Generate distribution artifacts for Windows and Linux.
+    cmds:
+      - task: dist:linux
+      - task: dist:windows
+
+  dist:linux:
+    desc: Generate Linux distribution artifacts.
+    cmds:
+      - >
+        docker build .
+        --target installer-linux
+        --output {{.DIST_DIR}}
+        --build-arg APP_VERSION={{.APP_VERSION}}
+
+  dist:windows:
+    desc: Generate Windows distribution artifacts.
+    cmds:
+      - >
+        docker build .
+        --target installer-windows
+        --output {{.DIST_DIR}}
+        --build-arg APP_VERSION={{.APP_VERSION}}
