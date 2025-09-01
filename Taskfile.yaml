@@ -71,14 +71,14 @@ tasks:
     platforms: [linux]
     cmds:
       - task: install
-      - scripts/conda.sh python -m src {{.CLI_ARGS}}
+      - scripts/conda.sh python -m rmviewer {{.CLI_ARGS}}
 
   run:windows:
     internal: true
     platforms: [windows]
     cmds:
       - task: install:windows
-      - scripts\\conda.bat python -m src {{.CLI_ARGS}}
+      - scripts\\conda.bat python -m rmviewer {{.CLI_ARGS}}
 
   format:check:
     desc: Check code style.

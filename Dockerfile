@@ -47,7 +47,7 @@ RUN --mount=source=rmviewer,target=/repo/rmviewer \
     --name RMViewer-$APP_VERSION \
     --add-data .version:. \
     --distpath /out/bin/linux \
-    rmviewer/main.py
+    rmviewer/__main__.py
 
 # Target environment for Windows.
 FROM debian:bookworm-slim AS pack-env
@@ -107,7 +107,7 @@ RUN --mount=source=rmviewer,target=/repo/rmviewer \
     --name RMViewer-$APP_VERSION \
     --add-data .version:. \
     --distpath /out/bin/windows \
-    rmviewer/main.py
+    rmviewer/__main__.py
 
 # Windows Packaging
 FROM pack-env AS nsis
