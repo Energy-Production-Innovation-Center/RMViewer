@@ -10,11 +10,14 @@ default:
 variables:
   OUT_DIR: "out"
   REPORT_DIR: "$OUT_DIR/report"
+  BUILD_DIR: "$OUT_DIR/bin"
+  DIST_DIR: "$OUT_DIR/dist"
 
 stages:
   - verify
-  - analyze
   - test
+  - analyze
+  - build
   - release
 
 workflow:
@@ -72,6 +75,105 @@ type:
   script:
     - go-task type:check
 
+.build:
+  stage: build
+  timeout: 1h
+  resource_group: docker-rmviewer
+  artifacts:
+    paths: [$BUILD_DIR]
+
+.build:linux:
+  extends: [.build]
+  script:
+    - go-task build:linux
+
+.build:windows:
+  extends: [.build]
+  script:
+    - go-task build:windows
+
+.dev:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+  artifacts:
+    expire_in: 8 hours
+  environment:
+    name: development
+    deployment_tier: development
+
+.test:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+  artifacts:
+    expire_in: 3 days
+  environment:
+    name: testing
+    deployment_tier: testing
+
+.stag:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  artifacts:
+    expire_in: 2 months
+  environment:
+    name: staging
+    deployment_tier: staging
+
+.prod:
+  rules:
+    - if: $CI_COMMIT_TAG
+  artifacts:
+    expire_in: never
+  environment:
+    name: production
+    deployment_tier: production
+
+build:dev:linux:
+  extends: [.dev, .build:linux]
+
+build:dev:windows:
+  extends: [.dev, .build:windows]
+
+build:test:linux:
+  extends: [.test, .build:linux]
+
+build:test:windows:
+  extends: [.test, .build:windows]
+
+build:stag:linux:
+  extends: [.stag, .build:linux]
+
+build:stag:windows:
+  extends: [.stag, .build:windows]
+
+.dist:
+  extends: [.prod]
+  stage: build
+  timeout: 1h
+  resource_group: docker-rmviewer
+  artifacts:
+    paths: [$DIST_DIR]
+    reports:
+      dotenv: job.env
+
+dist:linux:
+  extends: [.dist]
+  script:
+    - go-task APP_VERSION=$CI_COMMIT_TAG dist:linux
+  after_script:
+    - echo "DIST_LINUX_JOB_ID=$CI_JOB_ID" >> job.env
+
+dist:windows:
+  extends: [.dist]
+  script:
+    - go-task APP_VERSION=$CI_COMMIT_TAG dist:windows
+  after_script:
+    - echo "DIST_WINDOWS_JOB_ID=$CI_JOB_ID" >> job.env
+
 release:
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   stage: release
@@ -82,6 +184,23 @@ release:
     tag_name: $CI_COMMIT_TAG
     description: $CI_COMMIT_TAG_MESSAGE
     ref: $CI_COMMIT_SHA
+    assets:
+      links:
+        - name: "Linux installer (.deb)"
+          url: "$CI_PROJECT_URL/-/jobs/$DIST_LINUX_JOB_ID/artifacts/raw/$DIST_DIR/rmviewer-$CI_COMMIT_TAG-1.x86_64.deb"
+          link_type: package
+        - name: "Linux installer (.rpm)"
+          url: "$CI_PROJECT_URL/-/jobs/$DIST_LINUX_JOB_ID/artifacts/raw/$DIST_DIR/rmviewer-$CI_COMMIT_TAG-1.x86_64.rpm"
+          link_type: package
+        - name: "Linux binaries (.tar.gz)"
+          url: "$CI_PROJECT_URL/-/jobs/$DIST_LINUX_JOB_ID/artifacts/raw/$DIST_DIR/rmviewer-$CI_COMMIT_TAG-linux.tar.gz"
+          link_type: other
+        - name: "Windows installer (.exe)"
+          url: "$CI_PROJECT_URL/-/jobs/$DIST_WINDOWS_JOB_ID/artifacts/raw/$DIST_DIR/rmviewer-$CI_COMMIT_TAG-installer.exe"
+          link_type: package
+        - name: "Windows binaries (.zip)"
+          url: "$CI_PROJECT_URL/-/jobs/$DIST_WINDOWS_JOB_ID/artifacts/raw/$DIST_DIR/rmviewer-$CI_COMMIT_TAG-windows.zip"
+          link_type: other
   before_script: []
   script:
     - echo "running release job"
