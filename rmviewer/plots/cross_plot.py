@@ -161,4 +161,4 @@ def generate_cross_plot_chart(results, config):
             config,
         )
 
-    Logger().log_info(f"The cross plot graphs were generated in: {charts_path}")
+    Logger().log_info(f"Crossplots generated in: {charts_path}")

@@ -26,14 +26,14 @@ class RMViewer:
         self.dataset = dataset
         self.solutions_results = solutions_results
 
-        Logger().log_info("Graphs will be generated to visualize the results")
+        Logger().log_info("Charts will be generated to visualize the results")
 
-    @log_exceptions("Error generating cross plot chart")
+    @log_exceptions("Error generating cross plot")
     def generate_crossplot(
         self, variable_list: list[list[str]], prob_rms: pd.DataFrame, output_path: Path
     ) -> None:
         """
-        Generation of cross plot graphs.
+        Generation of cross plot.
 
         :param list variable_list: Pairs of variables to be plotted
         :param dataframe prob_rms: Probability of each representative model
@@ -46,11 +46,11 @@ class RMViewer:
             "output_path": output_path,
             "prob_rms": prob_rms,
         }
-        Logger().log_info(f"Generating crossplot with variables: {variable_list}")
+        Logger().log_info(f"Generating crossplots with variables: {variable_list}")
 
         generate_cross_plot_chart(self.solutions_results, config)
 
-    @log_exceptions("Error generating risk curve chart")
+    @log_exceptions("Error generating risk curve")
     def generate_risk_curve(
         self,
         models_cumulative_prob: pd.DataFrame,
@@ -59,7 +59,7 @@ class RMViewer:
         variables: list[str],
     ) -> None:
         """
-        Generation of risk curve graphs.
+        Generation of risk curve.
 
         :param dataframe models_cumulative_prob: Cumulative probability of models
         :param dataframe rms_cumulative_prob: Cumulative probability of RMs
@@ -74,19 +74,19 @@ class RMViewer:
             "rms_cumulative_prob": rms_cumulative_prob,
             "dataset": self.dataset,
         }
-        Logger().log_info(f"Generating risk curve with variables: {variables}")
+        Logger().log_info(f"Generating risk curves with variables: {variables}")
 
         generate_risk_curve_chart(self.solutions_results, config)
 
-    @log_exceptions("Error generating attribute level chart")
+    @log_exceptions("Error generating histogram")
     def generate_histogram(self, results: pd.DataFrame, output_path: Path) -> None:
         """
-        Generation of histogram graphs.
+        Generation of histogram.
 
         :param dataframe results: Result of the evaluation of the attribute level
         :param path output_path: Path where files will be saved
         """
-        Logger().log_info("Generating histogram chart")
+        Logger().log_info("Generating histograms")
 
         generate_attribute_levels_chart(
             self.solutions_results, self.solutions, results, output_path
@@ -95,7 +95,7 @@ class RMViewer:
     @log_exceptions("Error generating convergence chart")
     def generate_convergence_chart(self, output_path: Path, of_name: str = "of_value") -> None:
         """
-        Generation of solution convergence graphs.
+        Generation of solution convergence chart.
 
         :param path output_path: Path where files will be saved
         :param str of_value: OF name from results file

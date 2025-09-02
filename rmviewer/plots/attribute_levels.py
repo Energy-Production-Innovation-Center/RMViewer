@@ -110,4 +110,4 @@ def generate_attribute_levels_chart(dataset, solutions, results, output_path):
         df_rm = df_of[df_of["SOLUTION_ID"].isin([rm])]
         generate_histogram(df_rm, output_path, path_solutions[i])
 
-    Logger().log_info(f"Attribute level graphs were generated in: {output_path}")
+    Logger().log_info(f"Attribute-level histograms generated in: {output_path}")

@@ -223,4 +223,4 @@ def generate_risk_curve_chart(results, config):
         }
         show_figure(rms[index], variables_list, params, context)
 
-    Logger().log_info(f"The risk curve graphs were generated in: {charts_path}")
+    Logger().log_info(f"Risk curves generated in: {charts_path}")
