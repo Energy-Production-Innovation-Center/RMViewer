@@ -76,7 +76,7 @@ def show_figure(variables, df, charts_path, of_name):
     path_html = charts_path / Path("solutions_convergence.html")
     fig.write_html(path_html, full_html=True)
 
-    Logger().log_info(f"The convergence chart of the solutions was generated in: {path_html}")
+    Logger().log_info(f"Convergence chart generated in: {path_html}")
 
 
 def convergence_chart(df, charts_path, of_name):
