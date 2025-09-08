@@ -4,8 +4,8 @@
 # Exit on error.
 set -eo pipefail
 
-api_url='https://dev01.unisim.cepetro.unicamp.br/api/v4/projects/22'
-public_read_token='glpat-pZ7Yd7tJsA33x8rPvpGf'
+api_url='https://dev01.unisim.cepetro.unicamp.br/api/v4/projects/34'
+public_read_token='glpat-d91hLk3ynBV_MlQniOWpL286MQp1OjExCA.01.0y0i2rssn'
 
 get_development_version() {
     next_milestone=$(get_next_milestone)
