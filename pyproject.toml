@@ -3,7 +3,7 @@ name            = "rmviewer"
 description     = "Representative Model Viewer"
 authors         = [{name = "EpicUTS", email = "cepuni02@unicamp.br"}]
 dynamic         = ["version"]
-requires-python = ">=3.11, <3.13"
+requires-python = ">=3.11, <3.14"
 
 dependencies = [
     "pandas==2.3.1", 

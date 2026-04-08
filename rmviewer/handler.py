@@ -17,7 +17,11 @@ def call_viewer(config_path: Path) -> None:
     if config is None:
         raise ValueError("'config' key is required in date.")
 
-    project_path = Path(data.get("project_path"))
+    project_data = data.get("project_path")
+    assert project_data is not None
+
+    project_path = Path(project_data)
+
     solutions = config.get("solutions")
     dataset = data.get("dataset")
     solutions_results = data.get("solutions_results")
