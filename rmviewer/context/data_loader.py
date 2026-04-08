@@ -18,7 +18,13 @@ def load_data(config_path: Path) -> dict[str, Any]:
     config = data_validation.load_json(config_path)
     data_validation.validate_config(config)
 
-    project_path = Path(config.get("project_path"))
+    project_path_str = config.get("project_path")
+
+    if not project_path_str:
+        print("ERROR - It is necessary to include the project path.")
+        sys.exit(1)
+
+    project_path = Path(project_path_str)
 
     solutions = config.get("solutions", [])
     if not solutions:
