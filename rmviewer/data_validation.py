@@ -160,7 +160,7 @@ def validate_solutions(config: dict) -> None:
 
 def validate_config(config: dict) -> None:
     """
-    Validation of mandatory fields and values
+    Validation of mandatory fields and values.
     """
     required_keys = ["project_path", "solutions", "dataset", "solutions_results", "plot"]
     _validate_required_keys(config, required_keys)

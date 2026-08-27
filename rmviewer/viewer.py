@@ -7,6 +7,7 @@ from rmviewer.plots.attribute_levels import generate_attribute_levels_chart
 from rmviewer.plots.convergence import convergence_chart
 from rmviewer.plots.cross_plot import generate_cross_plot_chart
 from rmviewer.plots.risk_curve import generate_risk_curve_chart
+from rmviewer.plots.time_series import generate_time_series_chart
 from rmviewer.utils.decorators import log_exceptions
 
 
@@ -15,7 +16,13 @@ class RMViewer:
     Main class for Representative Model Viewer.
     """
 
-    def __init__(self, solutions=None, dataset=None, solutions_results=None):
+    def __init__(
+        self,
+        solutions,
+        dataset,
+        solutions_results,
+        time_series=None,
+    ):
         """
         Initializes the RMViewer class.
 
@@ -25,6 +32,7 @@ class RMViewer:
         self.solutions = solutions
         self.dataset = dataset
         self.solutions_results = solutions_results
+        self.time_series = time_series
 
         Logger().log_info("Charts will be generated to visualize the results")
 
@@ -103,3 +111,27 @@ class RMViewer:
         Logger().log_info("Generating convergence chart")
 
         convergence_chart(self.solutions_results, output_path, of_name)
+
+    @log_exceptions("Error generating time series chart")
+    def generate_time_series(
+        self,
+        variables,
+        output_path,
+    ):
+        """
+        Generation of time-series chart.
+
+        :param list variables: Variables to be plotted
+        :param path output_path: Path where files will be saved
+        """
+
+        if self.time_series is None:
+            raise ValueError("Time-series data was not provided.")
+
+        generate_time_series_chart(
+            time_series=self.time_series,
+            solutions=self.solutions,
+            solutions_results=self.solutions_results,
+            variables=variables,
+            output_path=output_path,
+        )

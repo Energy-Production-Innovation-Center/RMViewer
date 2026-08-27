@@ -21,7 +21,6 @@ class Logger(metaclass=LoggerSingleton):
         self.logger: logging.Logger = logging.getLogger(__name__)
 
         self.logger.setLevel(level)
-        # TODO Adicionar o path
         self.log_path: str = "path"
 
         if not self.logger.handlers:
