@@ -3,6 +3,7 @@
   "solutions": [22876],
   "dataset": "database_normalization.csv",
   "solutions_results": "solutions.csv",
+  "time_series": "timeseries_data",
   "plot": {
     "crossplot": {
       "variable_list": [["NPV", "NP"], ["NPV", "WP"]],
@@ -18,6 +19,14 @@
     },
     "convergence": {
       "of_name": "of_value"
+    },
+    "time_series": {
+      "variables": [
+          "FOPT",
+          "FOIP",
+          "FGPTH",
+          "FGOR"
+      ]
     }
   }
 }

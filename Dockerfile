@@ -80,13 +80,13 @@ RUN ./package_linux.sh $APP_VERSION /out && rm -rf ./*
 FROM tobix/pywine:3.12 AS target-windows
 WORKDIR /repo
 # Update Wine version to one that is compatible to Numpy
-RUN apt-get --purge remove -y wine-devel \
-    && apt-get update -y \
-    && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y winehq-devel git openssh-client \
-    && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/*
-# Update pyinstaller from Wine prefix
-RUN wine pip install --upgrade pyinstaller
+RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends \
+        git \
+        openssh-client && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN wine python -m pip install --upgrade pip setuptools wheel pyinstaller
 
 # Download CLI build dependencies for Windows.
 FROM target-windows AS cd-windows-cli

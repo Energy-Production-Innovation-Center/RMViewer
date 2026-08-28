@@ -22,7 +22,7 @@ def get_version() -> str:
         with version_path.open("r") as f:
             return f.read().strip()
     # Fallback value
-    return "0.0.1"
+    return "1.0.0"
 
 
 __all__ = ["RMViewer"]
