@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from rmviewer.context.data_loader import load_time_series
 from rmviewer.logger.custom_logger import Logger
 from rmviewer.plots.attribute_levels import generate_attribute_levels_chart
 from rmviewer.plots.convergence import convergence_chart
@@ -21,18 +22,21 @@ class RMViewer:
         solutions,
         dataset,
         solutions_results,
-        time_series=None,
+        time_series_path: Path | None = None,
     ):
         """
         Initializes the RMViewer class.
 
         Loads the solution IDs, the dataset and the optimization results.
-
         """
         self.solutions = solutions
         self.dataset = dataset
         self.solutions_results = solutions_results
-        self.time_series = time_series
+
+        self.time_series = None
+
+        if time_series_path is not None:
+            self.time_series = load_time_series(time_series_path)
 
         Logger().log_info("Charts will be generated to visualize the results")
 

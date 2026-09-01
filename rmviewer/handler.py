@@ -25,7 +25,7 @@ def call_viewer(config_path: Path) -> None:
     solutions = config.get("solutions")
     dataset = data.get("dataset")
     solutions_results = data.get("solutions_results")
-    time_series = data.get("time_series")
+    time_series_path = data.get("time_series_path")
 
     plots = config.get("plot", {})
 
@@ -33,7 +33,7 @@ def call_viewer(config_path: Path) -> None:
         solutions=solutions,
         dataset=dataset,
         solutions_results=solutions_results,
-        time_series=time_series,
+        time_series_path=time_series_path,
     )
 
     results_path = project_path / "charts"
@@ -86,7 +86,7 @@ def call_viewer(config_path: Path) -> None:
         )
 
     if time_series_plot := plots.get("time_series"):
-        if time_series is None:
+        if time_series_path is None:
             raise ValueError(
                 "Time-series configuration was provided, but no time-series data was loaded."
             )
