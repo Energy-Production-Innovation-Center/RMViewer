@@ -3,7 +3,7 @@
   "solutions": [22876],
   "dataset": "database_normalization.csv",
   "solutions_results": "solutions.csv",
-  "time_series": "timeseries_data",
+  "time_series_path": "timeseries_data",
   "plot": {
     "crossplot": {
       "variable_list": [["NPV", "NP"], ["NPV", "WP"]],

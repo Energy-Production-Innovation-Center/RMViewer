@@ -10,15 +10,12 @@ def load_df(project_path: Path, relative_path: str):
 
 
 def load_time_series(
-    project_path: Path,
-    relative_path: str,
+    time_series_path: Path,
 ) -> dict[str, Any]:
     """
     Loads time-series data from a directory.
     Each CSV file represents one model.
     """
-    time_series_path = project_path / relative_path
-
     if not time_series_path.is_dir():
         raise ValueError(f"Time-series path is not a directory: {time_series_path}")
 
@@ -68,9 +65,6 @@ def load_data(config_path: Path) -> dict[str, Any]:
     }
 
     if time_series_path := config.get("time_series"):
-        data["time_series"] = load_time_series(
-            project_path,
-            time_series_path,
-        )
+        data["time_series"] = load_time_series(project_path / time_series_path)
 
     return data
