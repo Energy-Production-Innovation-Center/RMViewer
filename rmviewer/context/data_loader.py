@@ -57,14 +57,9 @@ def load_data(config_path: Path) -> dict[str, Any]:
 
     solutions_results = data_validation.load_dataframe(project_path / config["solutions_results"])
 
-    data = {
+    return {
         "project_path": project_path,
         "config": config,
         "dataset": dataset,
         "solutions_results": solutions_results,
     }
-
-    if time_series_path := config.get("time_series"):
-        data["time_series"] = load_time_series(project_path / time_series_path)
-
-    return data

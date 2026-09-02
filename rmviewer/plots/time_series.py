@@ -103,7 +103,9 @@ def add_model_traces(
                 col=col + 1,
             )
 
-    for rm_index, model_name in enumerate(selected_models):
+    rm_index = 0
+    for model_id, model_name in selected_models.items():
+        rm_index += 1
         if model_name not in time_series:
             continue
 
@@ -122,11 +124,11 @@ def add_model_traces(
                     y=df_plot[variable],
                     mode="lines",
                     line={
-                        "color": colors[rm_index],
+                        "color": colors[rm_index - 1],
                         "width": RM_WIDTH,
                     },
-                    name=f"RM {rm_index + 1}",
-                    legendgroup=f"RM_{rm_index + 1}",
+                    name=f"RM {model_id}",
+                    legendgroup=f"RM_{model_id}",
                     showlegend=index == 0,
                     hovertemplate=(
                         f"Model: {model_name}"
@@ -235,10 +237,14 @@ def generate_time_series_chart(
 
         solution_rms = solution_result.filter(regex="^RM").iloc[0].dropna().tolist()
 
-        selected_models = get_selected_models(
+        name_models = get_selected_models(
             time_series,
             solution_rms,
         )
+
+        selected_models = {
+            id_model: name_models[index] for index, id_model in enumerate(solution_rms)
+        }
 
         colors = get_colors(solution_rms)
 

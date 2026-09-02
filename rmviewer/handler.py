@@ -25,7 +25,10 @@ def call_viewer(config_path: Path) -> None:
     solutions = config.get("solutions")
     dataset = data.get("dataset")
     solutions_results = data.get("solutions_results")
-    time_series_path = data.get("time_series_path")
+    time_series = config.get("time_series_path")
+
+    if time_series:
+        time_series_path = project_path / time_series
 
     plots = config.get("plot", {})
 
