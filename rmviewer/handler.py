@@ -8,7 +8,7 @@ def call_viewer(config_path: Path) -> None:
     """
     Prepare the data for execution.
 
-    :param config_path: Dictionary with execution configuration
+    :param config_path: Path to the execution configuration.
     """
 
     data = load_data(config_path)
@@ -18,14 +18,21 @@ def call_viewer(config_path: Path) -> None:
         raise ValueError("'config' key is required in data.")
 
     project_data = data.get("project_path")
-    assert project_data is not None
+
+    if project_data is None:
+        raise ValueError("'project_path' key is required in data.")
 
     project_path = Path(project_data)
 
     solutions = config.get("solutions")
     dataset = data.get("dataset")
     solutions_results = data.get("solutions_results")
-    time_series_path = data.get("time_series_path")
+    time_series = config.get("time_series_path")
+
+    time_series_path = None
+
+    if time_series:
+        time_series_path = project_path / time_series
 
     plots = config.get("plot", {})
 
@@ -91,7 +98,19 @@ def call_viewer(config_path: Path) -> None:
                 "Time-series configuration was provided, but no time-series data was loaded."
             )
 
+        rmsel_groups = None
+
+        if groups_file := time_series_plot.get("results"):
+            rmsel_groups = load_df(
+                project_path,
+                groups_file,
+            )
+
+        if rmsel_groups is None:
+            raise ValueError("Time-series configuration requires a 'groups' file.")
+
         viewer.generate_time_series(
             variables=time_series_plot["variables"],
             output_path=results_path,
+            rmsel_groups=rmsel_groups,
         )
