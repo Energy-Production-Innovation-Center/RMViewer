@@ -159,9 +159,14 @@ def add_coalesced_group(fig, time_series, model_ids, variable, params_fig):
 
     The group is represented by a min/max envelope.
 
-    The envelope itself has no hover information.
+    The envelope does not create its own legend entry, but belongs
+    to the same legend group as its representative RM.
     """
-    row, col, color = params_fig["row"], params_fig["col"], params_fig["color"]
+    row = params_fig["row"]
+    col = params_fig["col"]
+    color = params_fig["color"]
+    rm_id = params_fig["rm_id"]
+
     group_df = prepare_group_timeseries(
         time_series=time_series,
         model_ids=model_ids,
@@ -177,8 +182,9 @@ def add_coalesced_group(fig, time_series, model_ids, variable, params_fig):
         return
 
     group_df["group_min"] = group_df[model_columns].min(axis=1)
-
     group_df["group_max"] = group_df[model_columns].max(axis=1)
+
+    legendgroup = f"RM_{rm_id}"
 
     fig.add_trace(
         go.Scatter(
@@ -191,6 +197,7 @@ def add_coalesced_group(fig, time_series, model_ids, variable, params_fig):
             },
             hoverinfo="skip",
             showlegend=False,
+            legendgroup=legendgroup,
         ),
         row=row,
         col=col,
@@ -209,6 +216,7 @@ def add_coalesced_group(fig, time_series, model_ids, variable, params_fig):
             fillcolor=hex_to_rgba(color, 0.25),
             hoverinfo="skip",
             showlegend=False,
+            legendgroup=legendgroup,
         ),
         row=row,
         col=col,
@@ -260,6 +268,9 @@ def add_rm_trace(time_series, model_name, rm_id, params_fig):
 def add_model_traces(fig, time_series, groups, solution_id, extra):
     """
     Adds the coalesced groups and representative model traces.
+
+    Colors are associated with RM_ID rather than with the iteration
+    order of the groups/models.
     """
     variables = extra.get("variables")
     selected_models = extra.get("selected_models")
@@ -274,16 +285,25 @@ def add_model_traces(fig, time_series, groups, solution_id, extra):
         Logger().log_warning(f"No groups found for solution_id={solution_id}")
         return
 
-    for index, variable in enumerate(variables):
-        row = index + 1
-        col = 1
+    color_by_rm = {
+        rm_id: colors[index]
+        for index, rm_id in enumerate(selected_models.keys())
+        if index < len(colors)
+    }
 
-        for rm_index, (_, model_ids) in enumerate(solution_groups.items()):
-            if rm_index >= len(colors):
-                break
+    for rm_id, model_ids in solution_groups.items():
+        color = color_by_rm.get(rm_id)
 
-            color = colors[rm_index]
-            params_fig = {"row": row, "col": col, "color": color}
+        if color is None:
+            Logger().log_warning(f"No color found for RM_ID={rm_id}, solution_id={solution_id}")
+            continue
+
+        for index, variable in enumerate(variables):
+            row = index + 1
+            col = 1
+
+            params_fig = {"row": row, "col": col, "color": color, "rm_id": rm_id}
+
             add_coalesced_group(
                 fig=fig,
                 time_series=time_series,
@@ -292,14 +312,15 @@ def add_model_traces(fig, time_series, groups, solution_id, extra):
                 params_fig=params_fig,
             )
 
-    for rm_index, (rm_id, model_name) in enumerate(selected_models.items()):
-        if rm_index >= len(colors):
-            break
+    for rm_id, model_name in selected_models.items():
+        color = color_by_rm.get(rm_id)
+
+        if color is None:
+            Logger().log_warning(f"No color found for representative RM_ID={rm_id}")
+            continue
 
         if model_name not in time_series:
             continue
-
-        color = colors[rm_index]
 
         for index, variable in enumerate(variables):
             params_fig = {
@@ -356,6 +377,9 @@ def configure_figure(fig, variables):
         },
         autosize=True,
         showlegend=True,
+        legend={
+            "groupclick": "togglegroup",
+        },
         plot_bgcolor="#fafafa",
         hovermode="x unified",
     )
