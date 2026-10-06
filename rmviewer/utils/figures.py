@@ -12,7 +12,7 @@ def get_html_centered_content(content, width="1200px"):
             body {{
                 display: flex;
                 justify-content: center;
-                align-items: center;
+                align-items: flex-start;
                 min-height: 100vh;
                 margin: 0;
             }}
