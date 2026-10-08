@@ -26,13 +26,13 @@ def prepare_time_series(df):
     """
     df = df.copy()
 
-    if "Date" not in df.columns:
-        raise ValueError("Time-series dataframe must contain a 'Date' column.")
+    if "DATE" not in df.columns:
+        raise ValueError("Time-series dataframe must contain a 'DATE' column.")
 
-    date_values = df["Date"].astype(str).str.strip()
+    date_values = df["DATE"].astype(str).str.strip()
 
-    if "Time" in df.columns:
-        date_values = date_values + " " + df["Time"].astype(str).str.strip()
+    if "TIME" in df.columns:
+        date_values = date_values + " " + df["TIME"].astype(str).str.strip()
 
     df["datetime"] = pd.to_datetime(
         date_values,
@@ -181,42 +181,34 @@ def add_coalesced_group(fig, time_series, model_ids, variable, params_fig):
     if not model_columns:
         return
 
+    valid_rows = group_df[model_columns].notna().all(axis=1)
+
+    group_df = group_df.loc[valid_rows].copy()
+
+    if group_df.empty:
+        return
+
     group_df["group_min"] = group_df[model_columns].min(axis=1)
     group_df["group_max"] = group_df[model_columns].max(axis=1)
 
-    legendgroup = f"RM_{rm_id}"
+    x_values = group_df["datetime"].tolist() + group_df["datetime"].tolist()[::-1]
+
+    y_values = group_df["group_max"].tolist() + group_df["group_min"].tolist()[::-1]
 
     fig.add_trace(
         go.Scatter(
-            x=group_df["datetime"],
-            y=group_df["group_min"],
+            x=x_values,
+            y=y_values,
             mode="lines",
             line={
                 "color": color,
                 "width": 0,
             },
-            hoverinfo="skip",
-            showlegend=False,
-            legendgroup=legendgroup,
-        ),
-        row=row,
-        col=col,
-    )
-
-    fig.add_trace(
-        go.Scatter(
-            x=group_df["datetime"],
-            y=group_df["group_max"],
-            mode="lines",
-            line={
-                "color": color,
-                "width": 0,
-            },
-            fill="tonexty",
+            fill="toself",
             fillcolor=hex_to_rgba(color, 0.25),
             hoverinfo="skip",
             showlegend=False,
-            legendgroup=legendgroup,
+            legendgroup=f"RM_{rm_id}",
         ),
         row=row,
         col=col,
@@ -240,11 +232,16 @@ def add_rm_trace(time_series, model_name, rm_id, params_fig):
     if variable not in df_plot.columns:
         return
 
+    df_plot = df_plot[["datetime", variable]].dropna(subset=[variable])
+
+    if df_plot.empty:
+        return
+
     fig.add_trace(
         go.Scatter(
             x=df_plot["datetime"],
             y=df_plot[variable],
-            mode="lines",
+            mode="lines+markers",
             line={
                 "color": color,
                 "width": RM_WIDTH,
