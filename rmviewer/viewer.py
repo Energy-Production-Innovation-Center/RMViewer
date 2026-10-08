@@ -20,9 +20,9 @@ class RMViewer:
     def __init__(
         self,
         solutions,
-        dataset,
         solutions_results,
         time_series_path: Path | None = None,
+        dataset: pd.DataFrame | None = None,
     ):
         """
         Initializes the RMViewer class.

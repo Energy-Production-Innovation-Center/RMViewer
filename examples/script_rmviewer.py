@@ -11,7 +11,7 @@ df = pd.read_csv("/Documentos/project/solutions.csv")
 solutions_ids = [4962]
 dataset_normalization = pd.read_csv("/Documentos/project/database_normalization.csv")
 
-rmviewer = RMViewer(solutions=solutions_ids, dataset=dataset_normalization, solutions_results=df)
+rmviewer = RMViewer(solutions=solutions_ids, solutions_results=df, dataset=dataset_normalization)
 
 # Setting up a crossplot
 rmviewer.generate_convergence_chart(charts_path)

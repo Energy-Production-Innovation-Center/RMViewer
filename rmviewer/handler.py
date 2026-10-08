@@ -38,9 +38,9 @@ def call_viewer(config_path: Path) -> None:
 
     viewer = RMViewer(
         solutions=solutions,
-        dataset=dataset,
         solutions_results=solutions_results,
         time_series_path=time_series_path,
+        dataset=dataset,
     )
 
     results_path = project_path / "charts"
