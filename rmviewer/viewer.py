@@ -20,8 +20,8 @@ class RMViewer:
     def __init__(
         self,
         solutions,
-        dataset,
-        solutions_results,
+        dataset: pd.DataFrame | None = None,
+        solutions_results: pd.DataFrame | None = None,
         time_series_path: Path | None = None,
     ):
         """

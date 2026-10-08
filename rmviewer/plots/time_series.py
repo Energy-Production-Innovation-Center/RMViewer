@@ -26,13 +26,13 @@ def prepare_time_series(df):
     """
     df = df.copy()
 
-    if "Date" not in df.columns:
-        raise ValueError("Time-series dataframe must contain a 'Date' column.")
+    if "DATE" not in df.columns:
+        raise ValueError("Time-series dataframe must contain a 'DATE' column.")
 
-    date_values = df["Date"].astype(str).str.strip()
+    date_values = df["DATE"].astype(str).str.strip()
 
-    if "Time" in df.columns:
-        date_values = date_values + " " + df["Time"].astype(str).str.strip()
+    if "TIME" in df.columns:
+        date_values = date_values + " " + df["TIME"].astype(str).str.strip()
 
     df["datetime"] = pd.to_datetime(
         date_values,
@@ -240,11 +240,16 @@ def add_rm_trace(time_series, model_name, rm_id, params_fig):
     if variable not in df_plot.columns:
         return
 
+    df_plot = df_plot[["datetime", variable]].dropna(subset=[variable])
+
+    if df_plot.empty:
+        return
+
     fig.add_trace(
         go.Scatter(
             x=df_plot["datetime"],
             y=df_plot[variable],
-            mode="lines",
+            mode="lines+markers",
             line={
                 "color": color,
                 "width": RM_WIDTH,
