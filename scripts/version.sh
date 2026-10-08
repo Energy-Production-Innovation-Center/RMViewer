@@ -5,7 +5,7 @@
 set -eo pipefail
 
 api_url='https://dev01.unisim.cepetro.unicamp.br/api/v4/projects/34'
-public_read_token='glpat-d91hLk3ynBV_MlQniOWpL286MQp1OjExCA.01.0y0i2rssn'
+public_read_token='glpat-JylNn9bWO2aAM_GV5mpthG86MQp1OmYH.01.0w1vbtgaq'
 
 get_development_version() {
     next_milestone=$(get_next_milestone)
