@@ -31,9 +31,7 @@ def load_dataframe(path: Path) -> pd.DataFrame:
     :return: Data loaded into DataFrame
     """
     file_path = validate_file(path, extensions=".csv")
-    df = pd.read_csv(file_path, sep=None, engine="python", encoding="utf-8-sig")
-    df.columns = df.columns.str.upper()
-    return df
+    return pd.read_csv(file_path, sep=None, engine="python", encoding="utf-8-sig")
 
 
 def load_json(path: Path) -> dict:

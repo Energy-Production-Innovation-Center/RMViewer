@@ -101,13 +101,17 @@ def add_figure(vars_, fig, rms, solution_id, config):
 def show_figure(rms, vars_, charts_path, info_solutions, config):
     values_columns = len(vars_)
     rows = math.ceil(values_columns / 2)
+
+    vertical_spacing = min(0.25 / rows, 1 / (rows - 1)) if rows > 1 else 0
+
     fig = make_subplots(
-        rows=math.ceil(values_columns / 2),
+        rows=rows,
         cols=2,
         subplot_titles=[var["title"] for var in vars_],
-        vertical_spacing=max(0.05, 0.25 / rows),
+        vertical_spacing=vertical_spacing,
         horizontal_spacing=0.1,
     )
+
     fig = add_figure(vars_, fig, rms, info_solutions[1], config)
     fig = update_figure(vars_, fig, values_columns)
 
@@ -139,7 +143,10 @@ def convert_list(variable_list):
 def generate_cross_plot_chart(results, config):
     dataset = config.get("dataset")
     solutions_ids = config.get("solutions")
+
     variable_list = config.get("variable_list")
+    variable_list = [[var.upper() for var in pair_vars] for pair_vars in variable_list]
+
     charts_path = config.get("output_path")
     probability_list = config.get("prob_rms")
 
