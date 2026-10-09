@@ -190,6 +190,7 @@ def generate_risk_curve_chart(results, config):
     solution_ids = config["solution_ids"]
     charts_path = config["charts_path"]
     variables = config["variables"]
+    variables = [var.upper() for var in variables]
     models_cumulative_prob = config["models_cumulative_prob"]
     rms_cumulative_prob = config["rms_cumulative_prob"]
     dataset = config["dataset"]

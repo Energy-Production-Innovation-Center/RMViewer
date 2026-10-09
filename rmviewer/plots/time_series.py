@@ -426,6 +426,9 @@ def generate_time_series_chart(time_series, data, output_path, groups) -> None:
     solutions = data.get("solutions")
     solutions_results = data.get("solutions_results")
     variables = data.get("variables")
+    variables = [var.upper() for var in variables]
+
+    time_series.columns = time_series.columns.str.upper()
 
     for index, solution_id in enumerate(solutions):
         solution_result = solutions_results[solutions_results["solution_id"] == solution_id]
