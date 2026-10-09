@@ -428,7 +428,8 @@ def generate_time_series_chart(time_series, data, output_path, groups) -> None:
     variables = data.get("variables")
     variables = [var.upper() for var in variables]
 
-    time_series.columns = time_series.columns.str.upper()
+    for df in time_series.values():
+        df.columns = df.columns.str.upper()
 
     for index, solution_id in enumerate(solutions):
         solution_result = solutions_results[solutions_results["solution_id"] == solution_id]
