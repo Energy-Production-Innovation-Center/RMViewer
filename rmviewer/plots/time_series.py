@@ -241,7 +241,7 @@ def add_rm_trace(time_series, model_name, rm_id, params_fig):
         go.Scatter(
             x=df_plot["datetime"],
             y=df_plot[variable],
-            mode="lines+markers",
+            mode="lines",
             line={
                 "color": color,
                 "width": RM_WIDTH,
