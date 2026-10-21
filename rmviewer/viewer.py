@@ -40,12 +40,12 @@ class RMViewer:
 
         Logger().log_info("Charts will be generated to visualize the results")
 
-    @log_exceptions("Error generating cross plot")
     def generate_crossplot(
         self,
         variable_list: list[list[str]],
         prob_rms: pd.DataFrame,
         output_path: Path,
+        rmsel_groups: pd.DataFrame,
     ) -> None:
         """
         Generation of cross plot.
@@ -53,6 +53,7 @@ class RMViewer:
         :param variable_list: Pairs of variables to be plotted
         :param prob_rms: Probability of each representative model
         :param output_path: Path where files will be saved
+        :param rmsel_groups: DataFrame containing the RMSel model groups
         """
         config = {
             "dataset": self.dataset,
@@ -60,6 +61,7 @@ class RMViewer:
             "variable_list": variable_list,
             "output_path": output_path,
             "prob_rms": prob_rms,
+            "groups": rmsel_groups,
         }
 
         Logger().log_info(f"Generating crossplots with variables: {variable_list}")
@@ -69,13 +71,13 @@ class RMViewer:
             config,
         )
 
-    @log_exceptions("Error generating risk curve")
     def generate_risk_curve(
         self,
         models_cumulative_prob: pd.DataFrame,
         rms_cumulative_prob: pd.DataFrame,
         output_path: Path,
         variables: list[str],
+        risk_curve_results: pd.DataFrame,
     ) -> None:
         """
         Generation of risk curve.
@@ -84,6 +86,7 @@ class RMViewer:
         :param rms_cumulative_prob: Cumulative probability of RMs
         :param output_path: Path where files will be saved
         :param variables: List of variables to be plotted
+        :param risk_curve_results: Results containing model-to-RM associations
         """
         config = {
             "solution_ids": self.solutions,
@@ -92,6 +95,7 @@ class RMViewer:
             "models_cumulative_prob": models_cumulative_prob,
             "rms_cumulative_prob": rms_cumulative_prob,
             "dataset": self.dataset,
+            "groups": risk_curve_results,
         }
 
         Logger().log_info(f"Generating risk curves with variables: {variables}")

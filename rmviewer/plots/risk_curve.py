@@ -12,31 +12,48 @@ MIN_ROW = 0.1
 
 def generate_risk_curve(var, context, rms=None, show_legend=False, rms_y=None):
     df_models = context["dataset"]
-    df_prob = context["models_cumulative_prob"]
+    groups = context["groups"]
+    solution_id = context["solution_id"]
 
-    x_values = df_models.sort_values(by=var["x"])
-    y_values = df_prob.sort_values(by=var["x"], ascending=False)
+    groups = groups[(groups["SOLUTION_ID"] == solution_id) & (groups["VAR"] == var["x"])]
+
+    models = groups.merge(
+        df_models,
+        left_on="MODEL_ID",
+        right_on="ID",
+        how="inner",
+    )
 
     fig = go.Figure()
 
-    fig.add_trace(
-        go.Scatter(
-            x=x_values[var["x"]],
-            y=y_values[var["x"]],
-            mode="markers",
-            marker={"color": "black", "size": 4},
-            name="Models",
-            legendgroup="Models",
-            showlegend=show_legend,
-        )
-    )
+    rm_ids = groups["RM_ID"].drop_duplicates().tolist()
+    colors = get_colors(rm_ids)
+    color_by_rm = dict(zip(rm_ids, colors, strict=False))
 
+    for rm_id, rm_models in models.groupby("RM_ID", sort=False):
+        fig.add_trace(
+            go.Scatter(
+                x=rm_models[var["x"]],
+                y=rm_models["CUMULATIVE_PROBABILITY"],
+                mode="markers",
+                marker={
+                    "color": color_by_rm[rm_id],
+                    "size": 4,
+                },
+                name=f"RM {rm_id}",
+                legendgroup=f"RM_{rm_id}",
+                showlegend=False,
+            )
+        )
+
+    x_values = df_models.sort_values(by=var["x"])
     rms_x = x_values.loc[x_values["ID"].isin(rms)]
     rms_sorted = rms_x.sort_values(by=var["x"])
 
     sorted_colors = get_colors(rms_sorted["ID"])
 
     rms_x_sorted = rms_sorted[var["x"]].values
+
     if rms_y is not None:
         rms_y_sorted = rms_y.sort_values(by=var["x"], ascending=False)[var["x"]].values
     else:
@@ -55,9 +72,8 @@ def generate_risk_curve(var, context, rms=None, show_legend=False, rms_y=None):
         else:
             prev_y_val = rms_y_sorted[i - 1]
             midpoint_prev_y = (y_val + prev_y_val) / 2
-            midpoint_prev_x = x_val
 
-            line_x.append(midpoint_prev_x)
+            line_x.append(x_val)
             line_y.append(midpoint_prev_y)
 
         line_x.append(x_val)
@@ -66,9 +82,8 @@ def generate_risk_curve(var, context, rms=None, show_legend=False, rms_y=None):
         if i < len(rms_x_sorted) - 1:
             next_y_val = rms_y_sorted[i + 1]
             midpoint_next_y = (y_val + next_y_val) / 2
-            midpoint_next_x = x_val
 
-            line_x.append(midpoint_next_x)
+            line_x.append(x_val)
             line_y.append(midpoint_next_y)
         else:
             line_x.append(x_val)
@@ -96,7 +111,14 @@ def generate_risk_curve(var, context, rms=None, show_legend=False, rms_y=None):
             "y": y,
             "color": sorted_colors[i] if sorted_colors else "#FF6F00",
         }
-        for i, (rm_id, x, y) in enumerate(zip(rms_sorted["ID"], marker_x, marker_y, strict=False))
+        for i, (rm_id, x, y) in enumerate(
+            zip(
+                rms_sorted["ID"],
+                marker_x,
+                marker_y,
+                strict=False,
+            )
+        )
     ]
 
     rms_points_sorted = sorted(rms_points, key=lambda point: point["id"])
@@ -123,12 +145,18 @@ def generate_risk_curve(var, context, rms=None, show_legend=False, rms_y=None):
 
 def add_figure(variables, fig, rms, sol_id, context):
     legend_shown = True
+    context["solution_id"] = sol_id
+
     rms_y = context["rms_cumulative_prob"]
     rms_y = rms_y[rms_y["solution_id"] == sol_id]
 
     for var in variables:
         mini_fig = generate_risk_curve(
-            var, rms=rms, context=context, show_legend=legend_shown, rms_y=rms_y
+            var,
+            rms=rms,
+            context=context,
+            show_legend=legend_shown,
+            rms_y=rms_y,
         )
 
         for trace in mini_fig.data:
@@ -154,7 +182,7 @@ def show_figure(rms, variables, params, context):
         vertical_spacing = 0.01
 
     fig = make_subplots(
-        rows=math.ceil(values_columns / 2),
+        rows=rows,
         cols=2,
         vertical_spacing=vertical_spacing,
         horizontal_spacing=0.1,
@@ -172,8 +200,10 @@ def show_figure(rms, variables, params, context):
 
 def convert_list(variable_list):
     variables = []
+
     for index, item in enumerate(variable_list):
         row, col = divmod(index, 2)
+
         variables.append(
             {
                 "x": item,
@@ -183,32 +213,30 @@ def convert_list(variable_list):
                 "title": f"{item}",
             }
         )
+
     return variables
 
 
 def generate_risk_curve_chart(results, config):
     solution_ids = config["solution_ids"]
     charts_path = config["charts_path"]
-    variables = config["variables"]
-    variables = [var.upper() for var in variables]
+    variables = [var.upper() for var in config["variables"]]
+
     models_cumulative_prob = config["models_cumulative_prob"]
     rms_cumulative_prob = config["rms_cumulative_prob"]
     dataset = config["dataset"]
+    groups = config["groups"]
 
     context = {
         "models_cumulative_prob": models_cumulative_prob,
         "rms_cumulative_prob": rms_cumulative_prob,
         "dataset": dataset,
+        "groups": groups,
     }
+
     df = results[results["solution_id"].isin(solution_ids)]
 
-    path_solutions = [
-        f"best_sol_{i + 1}_id_{id_solution}" for i, id_solution in enumerate(solution_ids)
-    ]
-
-    path_solutions = [
-        f"best_sol_{i + 1}_id_{id_solution}" for i, id_solution in enumerate(solution_ids)
-    ]
+    path_solutions = [f"best_sol_{i + 1}_id_{sol_id}" for i, sol_id in enumerate(solution_ids)]
 
     variable_list = list(variables)
 
@@ -217,11 +245,13 @@ def generate_risk_curve_chart(results, config):
 
     for index, sol_id in enumerate(solution_ids):
         variables_list = convert_list(variable_list)
+
         params = {
             "charts_path": charts_path,
             "path_solutions": path_solutions[index],
             "sol_id": sol_id,
         }
+
         show_figure(rms[index], variables_list, params, context)
 
     Logger().log_info(f"Risk curves generated in: {charts_path}")

@@ -7,12 +7,14 @@
   "plot": {
     "crossplot": {
       "variable_list": [["NPV", "NP"], ["NPV", "WP"]],
-      "prob_rms": "rms_probabilities.csv"
+      "prob_rms": "rms_probabilities.csv",
+      "results": "cross_plot_objective_function.csv"
     },
     "risk_curve": {
       "models_cumulative_prob": "cumulative_probability.csv",
       "rms_cumulative_prob": "rms_cumulative_prob.csv",
-      "variables": ["NPV", "NP", "WP"]
+      "variables": ["NPV", "NP", "WP"],
+      "results": "risk_curve_objective_function.csv"
     },
     "histogram": {
       "results": "attribute_levels_objective_function.csv"

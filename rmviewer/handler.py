@@ -51,10 +51,16 @@ def call_viewer(config_path: Path) -> None:
             cross_plot["prob_rms"],
         )
 
+        rmsel_groups = load_df(
+            project_path,
+            cross_plot["results"],
+        )
+
         viewer.generate_crossplot(
             variable_list=cross_plot["variable_list"],
             prob_rms=prob_rms,
             output_path=results_path,
+            rmsel_groups=rmsel_groups,
         )
 
     if risk_curve_plot := plots.get("risk_curve"):
@@ -68,11 +74,17 @@ def call_viewer(config_path: Path) -> None:
             risk_curve_plot["rms_cumulative_prob"],
         )
 
+        risk_curve_results = load_df(
+            project_path,
+            risk_curve_plot["results"],
+        )
+
         viewer.generate_risk_curve(
             models_cumulative_prob=models_cumulative_prob,
             rms_cumulative_prob=rms_cumulative_prob,
             output_path=results_path,
             variables=risk_curve_plot["variables"],
+            risk_curve_results=risk_curve_results,
         )
 
     if hist_plot := plots.get("histogram"):
